@@ -30,6 +30,21 @@ async function run() {
     const roomsCollection = client.db('aircncDb').collection('rooms')
     const bookingsCollection = client.db('aircncDb').collection('bookings')
 
+    // user data save section
+
+    app.put('/users/:email', async (req, res) => {
+      const email = req.params.email;
+      const user = req.body;
+      const query = { email: email };
+      const option = { upsert: true };
+      const updateDoc = {
+        $set: user
+      };
+      const result = await usersCollection.updateOne(query, updateDoc, option);
+      console.log(result, email);
+      res.send(result);
+    })
+
     // Send a ping to confirm a successful connection
     await client.db('admin').command({ ping: 1 })
     console.log(

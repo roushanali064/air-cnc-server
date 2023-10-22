@@ -43,13 +43,54 @@ async function run() {
       const result = await usersCollection.updateOne(query, updateDoc, option);
       res.send(result);
     })
+    // user data get
+    app.get('/user/:email', async (req,res)=>{
+      const email = req.params.email;
+      const query = { email: email };
+      const result = await usersCollection.findOne(query)
+      res.send(result)
+    })
 
+    // rooms api
     // add rooms
 
     app.post('/room', async (req,res)=>{
       const room = req.body;
       const result = await roomsCollection.insertOne(room);
       res.send(result)
+    })
+    // get all rooms
+    app.get('/rooms', async (req,res)=>{
+      const result = await roomsCollection.find().toArray()
+      res.send(result)
+    })
+    // get room
+    app.get('/room/:id', async (req,res)=>{
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await roomsCollection.findOne(query)
+      res.send(result)
+    })
+    
+    // saved booking
+    app.post('/booking', async (req,res)=>{
+      const bookingInfo = req.body;
+      const result = await bookingsCollection.insertOne(bookingInfo);
+      res.send(result)
+    })
+
+    // booking status
+
+    app.put('/bookingStatus/:id', async (req, res) => {
+      const roomId = req.params.id;
+      const status = req.body;
+      const query = { _id: new ObjectId(roomId) };
+      const option = { upsert: true };
+      const updateDoc = {
+        $set: status
+      };
+      const result = await roomsCollection.updateOne(query, updateDoc, option);
+      res.send(result);
     })
 
     // Send a ping to confirm a successful connection
